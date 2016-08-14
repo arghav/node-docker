@@ -1,0 +1,40 @@
+version: '2'
+services:
+  mongo:
+    container_name: "node-mongo"
+    image: mongo:3.3
+    command: "--smallfiles"
+    ports:
+      - "27017:27017"
+    volumes:
+      - /Volumes/node-mongo:/db/node-mongo
+
+  api:
+    container_name: "node-api"
+    build: ./api
+    command: sh -c "npm start"
+    ports:
+      - "4040:4040"
+    volumes:
+      - ./api:/node-api
+    environment:
+      PATH: $PATH:/node-api/node_modules/.bin
+      NODE_ENV: dev
+      HTTP_SERVER_PORT: 4040
+    links:
+      - mongo
+
+  web:
+    container_name: "node-web"
+    build: ./web
+    command: sh -c "npm start"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./web:/node-web
+    environment:
+      PATH: $PATH:/node-web/node_modules/.bin
+      NODE_ENV: dev
+      HTTP_SERVER_PORT: 3000
+    links:
+      - api
