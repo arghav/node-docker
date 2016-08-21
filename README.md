@@ -3,14 +3,14 @@ Boilerplate for new Node.js projects that runs on Docker. Includes a starter kit
 
 This boilerplate was extracted from an existing node project and is a `Work In Progress`.
 
-#Quickstart
+# Quickstart
 
 Run `docker-compose up --build` from the base directory.
 
 `http://localhost:3000` should give you the frontend and `http://localhost:4040` should give you the API.
 
-#TODO
+# TODO
 
-  1. Make sure API tests are working
+  1. ~~Make sure API tests are working~~
   2. Use the Redux store in web
   3. Better README
