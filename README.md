@@ -1,18 +1,16 @@
 # node-docker
-Boilerplate for new Node.js projects that run on Docker. Includes a starter kit for APIs and React + Redux + Webpack powered frontend.
+Boilerplate for new Node.js projects that run on Docker. Includes a starter kit for APIs with Express, and a React + Redux + Webpack powered frontend with hot reloading.
 
-This boilerplate was extracted from an existing node project and is a `Work In Progress`.
+This is a work in progress. Feel free to create issues for any bugs or problems you face.
 
 # Quickstart
 
-Run `docker-compose up --build` from the base directory.
+Run `docker-compose up` from the base directory.
 
-`http://localhost:3000` should give you the frontend and `http://localhost:4040` should give you the API.
+If everything goes well `http://localhost:3000` should give you the frontend, and `http://localhost:4040` should be your the API endpoint.
 
-Use `docker-compose run api npm test` to run the API tests.
+Use `docker-compose run api npm test` to run the API tests provided.
 
 # TODO
-
-  1. ~~Make sure API tests are working~~
-  2. Use the Redux store in web
-  3. Better README
+  1. Use API in Web
+  2. Better README
