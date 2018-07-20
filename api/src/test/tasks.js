@@ -2,6 +2,7 @@
 
 process.env.NODE_ENV = 'test';
 
+const config = require('config');
 const assert = require('assert');
 const should = require('should');
 const request = require('supertest');
@@ -9,17 +10,24 @@ const mongoose = require('mongoose');
 
 const app = require('../app');
 
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log('====================================');
+  console.log("db connection opened");
+  console.log('====================================');
+});
+
 describe('/tasks', function () {
   before(function(done) {
-    var db = mongoose.connection;
-    mongoose.connection.db.dropCollection('tasks', function(err, result) {
+    db.dropCollection('tasks', function(err, result) {
       // if err ignore it
       done();
     });
   });
-  
+
   let task = { title: 'A test todo' };
-  
+
   describe('POST /tasks', function() {
     it('should create a new task resource and respond with the resource in JSON', function(done) {
       request(app)
@@ -30,8 +38,11 @@ describe('/tasks', function () {
         .expect(201)
         .end(function(err, res) {
           if (err) return done(err);
-  
+
           let data = res.body;
+          console.log('====================================');
+          console.log(data);
+          console.log('====================================');
           let keys = ['id', 'title', 'high_priority', 'date', 'is_done', 'is_archived', 'created_at', 'updated_at'];
           keys.forEach(function (key, index) {
             data.should.have.property(key);
@@ -41,13 +52,13 @@ describe('/tasks', function () {
           data.high_priority.should.be.exactly(false);
           data.is_done.should.be.exactly(false);
           data.is_archived.should.be.exactly(false);
-  
+
           task = res.body;
           done();
         });
     });
   });
-  
+
   describe('GET /tasks/:id', function() {
     it('should respond with 404 for nonExistentId01', function(done) {
       request(app)
@@ -60,7 +71,7 @@ describe('/tasks', function () {
           done();
         });
     });
-  
+
     it('should respond with the json resource', function(done) {
       request(app)
         .get('/tasks/' + task.id)
@@ -74,7 +85,7 @@ describe('/tasks', function () {
         });
     });
   });
-  
+
   describe('PUT /tasks/:id', function() {
     it('should respond with 404 for nonExistentId01', function(done) {
       request(app)
@@ -90,7 +101,7 @@ describe('/tasks', function () {
           done();
         });
     });
-  
+
     it('should update the resource and respond with resource in JSON', function(done) {
       request(app)
         .put('/tasks/' + task.id)
@@ -102,9 +113,9 @@ describe('/tasks', function () {
         .expect(200)
         .end(function (err, res) {
           if (err) return done(err);
-  
+
           let data = res.body;
-  
+
           data.id.should.be.exactly(task.id).and.be.a.String();
           data.title.should.be.exactly("An updated todo").and.be.a.String();
           data.is_done.should.be.exactly(task.is_done).and.be.a.Boolean();
@@ -113,15 +124,15 @@ describe('/tasks', function () {
           should.equal(data.date, task.date);
           data.created_at.should.be.exactly(task.created_at).and.be.a.Number();
           data.updated_at.should.not.equal(task.updated_at).and.be.a.Number();
-  
+
           task = res.body;
           done();
         });
     });
   });
-  
+
   let anotherTask = { title: "this is a new task" };
-  
+
   describe('POST /tasks', function() {
     it('should create a new task resource and respond with the resource in JSON', function(done) {
       request(app)
@@ -132,7 +143,7 @@ describe('/tasks', function () {
         .expect(201)
         .end(function(err, res) {
           if (err) return done(err);
-  
+
           let data = res.body;
           let keys = ['id', 'title', 'high_priority', 'date', 'is_done', 'is_archived', 'created_at', 'updated_at'];
           keys.forEach(function (key, index) {
@@ -143,12 +154,12 @@ describe('/tasks', function () {
           data.high_priority.should.be.exactly(false);
           data.is_done.should.be.exactly(false);
           data.is_archived.should.be.exactly(false);
-  
+
           anotherTask = res.body;
           done();
         });
     });
-  
+
     it('should respond with the multiple json resources', function(done) {
       request(app)
         .get('/tasks/')
@@ -161,7 +172,7 @@ describe('/tasks', function () {
         });
     });
   });
-  
+
   describe('DELETE /tasks/:id', function() {
     it('should respond with 404 for nonExistentId01', function(done) {
       request(app)
@@ -174,7 +185,7 @@ describe('/tasks', function () {
           done();
         });
     });
-  
+
     it('should respond with 200', function(done) {
       request(app)
         .del('/tasks/' + task.id)
@@ -186,7 +197,7 @@ describe('/tasks', function () {
           done();
         });
     });
-  
+
     it('should respond 404 because the resource has been deleted', function(done) {
       request(app)
         .get('/tasks/' + task.id)

@@ -1,5 +1,3 @@
-'use strict';
-
 const router = require('./router');
 const task = require('../models/task');
 
@@ -31,7 +29,7 @@ router.put('/:id', function(request, response) {
   if (!request.body) {
     response.status(400).json({ message: "request body is missing" });
   }
-    
+
   task.put(request.params.id, request.body).then(function (resource) {
     router.sendResponse(response, resource);
   }).catch(function (error) {

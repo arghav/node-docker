@@ -1,12 +1,10 @@
 /**
- * An extesnion of the express router with custom methods
+ * An extension of the express router with custom methods
  */
-'use strict';
-
 const express = require('express');
 const router = express.Router();
 
-router.sendResponse = function (response, resource, code) {
+router.sendResponse = (response, resource, code) => {
   if (!resource) {
     response.status(404).json({ message: "Resource not found" });
   } else {
@@ -14,7 +12,7 @@ router.sendResponse = function (response, resource, code) {
   }
 };
 
-router.sendError = function (response, error) {
+router.sendError = (response, error) => {
   if ("ObjectId" === error.kind && "CastError" === error.name) {
     response.status(404).json({ message: "Resource not found" });
   } else {

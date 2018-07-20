@@ -1,5 +1,3 @@
-'use strict';
-
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -53,7 +51,7 @@ module.exports.getAll = function (sinceId, limit) {
     sinceId = new mongoose.Types.ObjectId(sinceId);
     query._id = { $gt: sinceId };
   }
-  
+
   return new Promise(function (resolve, reject) {
     Task.find(query).limit(limit).exec().then(function (resource) {
       resolve(resource);
@@ -66,7 +64,7 @@ module.exports.getAll = function (sinceId, limit) {
 module.exports.post = function (data) {
   return new Promise(function (resolve, reject) {
     const task = new Task(data);
-    
+
     task.save().then(function (resource) {
       resolve(resource);
     }).catch(function (error) {
@@ -80,14 +78,14 @@ module.exports.put = function (id, data) {
   return new Promise(function (resolve, reject) {
     Task.findById(id).exec().then(function (resource) {
       if (!resource) resolve(resource);
-      
+
       const task = resource;
       Object.keys(data).forEach(function(key) {
         if (updatableFields.indexOf(key) > -1) {
           task[key] = data[key];
         }
       });
-      
+
       task.save().then(function (resource) {
         resolve(resource);
       }).catch(function (error) {
@@ -103,7 +101,7 @@ module.exports.delete = function (id) {
   return new Promise(function (resolve, reject) {
     Task.findById(id).exec().then(function (resource) {
       if (!resource) resolve(resource);
-      
+
       const task = resource;
       task.remove().then(function (resource) {
         resolve(resource);

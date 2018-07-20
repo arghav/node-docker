@@ -6,15 +6,18 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
  * Module dependencies.
  */
 
+const db = require('../src/db');
 const app = require('../src/app');
-const debug = require('debug')('api');
+const debug = require('debug')('api:http');
 const http = require('http');
 const config = require('config');
+
+// start db connection
+db.connect();
 
 /**
  * Get port from environment and store in Express.
  */
-
 const port = normalizePort(config.get('http').port);
 app.set('port', port);
 
@@ -29,34 +32,8 @@ const server = http.createServer(app);
  */
 
 server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
 
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val) {
-  var port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
-
-/**
- * Event listener for HTTP server "error" event.
- */
-
-function onError(error) {
+server.on('error', (error) => {
   if (error.syscall !== 'listen') {
     throw error;
   }
@@ -78,16 +55,32 @@ function onError(error) {
     default:
       throw error;
   }
-}
+});
 
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function onListening() {
+server.on('listening', () => {
   var addr = server.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+});
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
 }
